@@ -3,8 +3,9 @@ from PIL import Image, UnidentifiedImageError
 from fpdf import FPDF
 from tqdm import tqdm  # 导入 tqdm 用于进度条
 
-# 假设图片文件存储在指定的文件夹中
-folder_path = "E:\\2025\\hathitrust_images"  # 将此路径替换为实际的图片文件夹路径
+
+folder_path = "file_path"  # 将此路径替换为实际的图片文件夹路径
+#E:\\2025\\hathitrust_images
 
 # Step 1: 获取图片文件列表
 image_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith(('.jpg', '.png', '.jpeg'))]
