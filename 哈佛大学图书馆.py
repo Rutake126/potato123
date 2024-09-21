@@ -5,7 +5,8 @@ from playwright.sync_api import sync_playwright
 from tqdm import tqdm  # 用于显示下载进度
 
 # 可以避开使用requests遇到的202问题
-
+# 下载哈佛大学公开的图书资源
+#测试链接https://curiosity.lib.harvard.edu/chinese-rare-books/catalog/49-990092715210203941
 def run(playwright):
     # 创建保存图片的文件夹
     folder_name = "downloaded_images"
@@ -24,7 +25,7 @@ def run(playwright):
     page = context.new_page()
 
     # 下载的 URL 模板
-    url_template = "https://ids.lib.harvard.edu/ids/iiif/{}/full/full/0/default.jpg"
+    url_template = "https://ids.lib.harvard.edu/ids/iiif/{}/full/full/0/default.jpg" #替换自己的url
 
     # 图片编号范围
     start_id = 48435315
