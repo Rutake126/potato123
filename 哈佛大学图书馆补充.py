@@ -4,7 +4,7 @@ import random
 from playwright.sync_api import sync_playwright
 from tqdm import tqdm  # 用于显示下载进度
 
-
+#用于补充下载中遇到的图片缺失的问题
 def run(playwright):
     # 创建保存图片的文件夹
     folder_name = "downloaded_images"
