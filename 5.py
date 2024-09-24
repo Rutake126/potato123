@@ -3,8 +3,8 @@ import requests
 from PIL import Image
 import xml.etree.ElementTree as ET
 
-# 设置路径为 E:\2025\download1
-download_path = os.path.join('E:\\2025', 'download1')
+# 设置路径为 E:\2025\download1  
+download_path = os.path.join('E:\\2025', 'download1') 
 
 # 下载和解析 XML
 dzi = "https://opac.lib.takushoku-u.ac.jp/kyugaichi/htmls/resources/2013_013_001/root.xml"
@@ -17,7 +17,7 @@ print(xml_content)
 
 root = ET.fromstring(xml_content)
 
-# 获取 <image> 节点并提取信息
+# 获取 <image> 节点并提取信息 ，没有的可以换成resource
 image_node = root.find('.//image')
 if image_node is not None:
     wi = int(image_node.attrib['width'])
