@@ -1,7 +1,7 @@
 import requests
 
-# 本地PDF文件的完整URL
-pdf_url = "https://zt.chaoxing.com/reader/blobPdf?readerKey=reader_key_1e363317-c2db-44ae-b6bf-1a00ccb33239"
+# 认准blobPdf?readerKey开头
+pdf_url = "https://zt.chaoxing.com/reader/blobPdf?readerKey=reader_key_1e363317-c2db-44ae-b6bf-1a00ccb33239"  
 
 # 设置请求头
 headers = {
