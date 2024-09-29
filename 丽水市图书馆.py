@@ -2,7 +2,7 @@ import requests
 from tqdm import tqdm
 import uuid 
 
-# blobPdf?readerKey
+# blobPdf?readerKey （改成自己的url）
 pdf_url = "https://zt.chaoxing.com//reader/blobPdf?readerKey=reader_key_497119a2-79b0-44e2-b573-1e0dba698492"
 
 # 设置请求头
