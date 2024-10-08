@@ -1,13 +1,11 @@
 import os
-import time
-import random
 from datetime import datetime
 from tqdm import tqdm
 import concurrent.futures
 from playwright.sync_api import sync_playwright
+#1.2版本，读取txt的数字id，更方便下载
 
-#更新：使用 enumerate 生成顺序编号，从 1 开始递增到 total_pages，确保文件名是 image_1.jpg 到 image_217.jpg。
-# 定义图片下载函数，增加 image_number 参数用于顺序命名文件
+# 定义图片下载函数
 def download_image(image_id, image_number, url_template, folder_name):
     with sync_playwright() as playwright:
         try:
@@ -18,20 +16,18 @@ def download_image(image_id, image_number, url_template, folder_name):
             )
             page = context.new_page()
 
+            # 去除换行符和空白字符
+            image_id = image_id.strip()
             image_url = url_template.format(image_id)
             response = page.goto(image_url, wait_until="domcontentloaded", timeout=120000)  # 增加超时时间
+            image_bytes = response.body()
 
-            # 检查响应状态码
-            if response.status == 200:
-                image_bytes = response.body()
-                # 使用顺序号命名文件，而非 image_id
-                image_path = os.path.join(folder_name, f"image_{image_number}.jpg")
-                with open(image_path, "wb") as f:
-                    f.write(image_bytes)
+            # 确保文件名不包含非法字符，使用自定义的序号命名文件
+            image_path = os.path.join(folder_name, f"{image_number}.jpg")
+            with open(image_path, "wb") as f:
+                f.write(image_bytes)
 
-                print(f"Image {image_id} (renamed to image_{image_number}.jpg) downloaded successfully.")
-            else:
-                print(f"Failed to download image {image_id}. Status code: {response.status}")
+            print(f"Image {image_id} downloaded successfully as {image_number}.jpg.")
         except Exception as e:
             print(f"Error downloading image {image_id}: {e}")
         finally:
@@ -48,10 +44,16 @@ def create_new_folder(base_folder="downloaded_images"):
     return new_folder
 
 
-# 从文件中读取 ID
-def read_ids_from_file(file_name):
-    with open(file_name, "r") as f:
-        return [line.strip() for line in f.readlines() if line.strip().isdigit()]
+# 从 dis.txt 中读取 ID 列表
+def read_ids_from_file(filename="ids.txt"):
+    try:
+        with open(filename, "r") as f:
+            # 使用 .strip() 去除每行末尾的换行符和多余的空白字符
+            ids = [line.strip() for line in f.readlines()]
+        return ids
+    except FileNotFoundError:
+        print(f"文件 {filename} 不存在。请确保 ids.txt 文件存在并包含所需 ID。")
+        return []
 
 
 # 主函数
@@ -59,22 +61,26 @@ def run():
     # 配置 URL 模板
     url_template = "https://ids.lib.harvard.edu/ids/iiif/{}/full/full/0/default.jpg"
 
-    # 读取 ID 列表
-    ids = read_ids_from_file("extracted_data.txt")
+    # 从文件中读取 ID 列表
+    ids = read_ids_from_file()
 
-    # 提示用户请求的总页数
-    total_pages = len(ids)
-    print(f"共请求 {total_pages} 页。")
+    # 限制下载的图片数量为 246
+    ids = ids[:246]
+
+    if not ids:
+        print("没有可用的 ID 来下载图片。")
+        return
 
     # 创建新文件夹用于存放图片
     folder_name = create_new_folder()
 
-    # 使用多进程下载图片，并使用 enumerate 为每个图片编号
+    print(f"Starting download of {len(ids)} images.")
+
+    # 使用多进程下载图片
     with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
         list(tqdm(
-            executor.map(download_image, ids, range(1, total_pages + 1), [url_template] * total_pages,
-                         [folder_name] * total_pages),
-            total=total_pages,
+            executor.map(download_image, ids, range(1, len(ids) + 1), [url_template]*len(ids), [folder_name]*len(ids)),
+            total=len(ids),
             desc="Downloading images"
         ))
 
