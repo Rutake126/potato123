@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 import re
-
+#1.0 输入一个可解析的json，提取相应的id，更快速准确的下载图片
 
 def extract_ids_from_manifest(manifest_url):
     ids = []
