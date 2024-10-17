@@ -4,7 +4,7 @@ import requests
 from PIL import Image
 import xml.etree.ElementTree as ET
 from DrissionPage import ChromiumPage, ChromiumOptions
-
+#1.0版本
 
 def get_dzi_info(url):
     """获取页面中的 DZI 信息"""
@@ -29,7 +29,7 @@ def generate_dzi_file(dzi_data, filename='image.dzi'):
     if not isinstance(dzi_data, dict):
         print("获取的DZI信息不是字典类型，无法生成DZI文件。")
         return
-
+#参数根据情况修改
     xml_content = f'''<?xml version="1.0" encoding="UTF-8"?>
 <Image TileSize="{dzi_data.get('TileSize', 254)}" Overlap="{dzi_data.get('Overlap', 1)}" 
        Format="{dzi_data.get('Format', 'png')}" 
@@ -143,7 +143,7 @@ def main():
         if os.path.exists(failed_urls_file):
             with open(failed_urls_file, 'r', encoding='utf-8') as f:
                 failed_urls = set([line.strip() for line in f.readlines()])
-
+#level根据自己情况修改
         level = 15
         cols = math.ceil(width / tile_size)
         rows = math.ceil(height / tile_size)
