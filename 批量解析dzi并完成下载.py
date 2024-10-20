@@ -12,7 +12,7 @@ import re
 dzi_template = '''<?xml version="1.0" encoding="UTF-8"?>
 <Image TileSize="{TileSize}" Overlap="{Overlap}" Format="{Format}"
        xmlns="{xmlns}" Url="{Url}">
-       <Size Width="{Width}" Height="{Height}"/>
+    <Size Width="{Width}" Height="{Height}"/>
 </Image>'''
 
 
@@ -37,30 +37,34 @@ async def fetch_tile_sources_from_page(page_url, file_index, output_dir, tile_le
                 tile_sources_match = re.search(r'tileSources:\s*{\s*Image:\s*{([^}]*)}', script_content)
                 if tile_sources_match:
                     tile_sources_str = tile_sources_match.group(1)
-                    fields = re.findall(r'(\w+):\s*["\']?([^"\',\s]+)["\']?', tile_sources_str)
 
+                    # 提取字段，并排除 'Size'
+                    fields = re.findall(r'(\w+):\s*["\']?([^"\',\s]+)["\']?', tile_sources_str)
                     for key, value in fields:
-                        tile_sources[key] = value
+                        if key.lower() != "size":  # 排除 Size 字段
+                            tile_sources[key] = value
 
                     print("Extracted tileSources Data:")
                     for key, value in tile_sources.items():
                         print(f"{key}: {value}")
 
+                    # 使用修正后的 DZI 模板构建内容
                     dzi_content = dzi_template.format(
                         TileSize=tile_sources.get("TileSize", "0"),
                         Overlap=tile_sources.get("Overlap", "0"),
                         Format=tile_sources.get("Format", "png"),
                         xmlns=tile_sources.get("xmlns", "https://schemas.microsoft.com/deepzoom/2009"),
-                        Url=tile_sources.get("Url", "").rstrip(
-                            '/') + f"/{tile_level}/" if tile_level > 0 else tile_sources.get("Url", ""),
+                        Url=tile_sources.get("Url", "").rstrip('/') + f"/{tile_level}/",
                         Width=tile_sources.get("Width", "0"),
-                        Height=tile_sources.get("Height", "0"),
+                        Height=tile_sources.get("Height", "0")
                     )
 
+                    # 保存 DZI 文件
                     dzi_filename = os.path.join(output_dir, f"dzi_{file_index}.dzi")
                     with open(dzi_filename, 'w', encoding='utf-8') as f:
                         f.write(dzi_content)
                     print(f"Wrote to {dzi_filename}")
+
                 else:
                     print("tileSources data not found in the script.")
                 break
@@ -86,7 +90,6 @@ async def download_tiles(dzi_file, output_dir, tile_level=0):
 
     for x in range(columns):
         for y in range(rows):
-            # 构造 tile_url，确保不重复层级
             tile_url = f"{base_url}/{x}_{y}.png"
             tile_path = os.path.join(output_dir, f"{x}_{y}.png")
 
@@ -149,17 +152,15 @@ def merge_pdfs(pdf_paths, output_path):
     merger.close()
     print(f"Merged PDF saved: {output_path}")
 
-
 async def main_fetch():
-    """Main function to fetch tile sources and download tiles."""
+    #自定义文件路径，URL文件信息
     with open("success_links.txt", "r") as f:
         urls = f.read().splitlines()
-
     output_directory = "E:/2025/Processed_Output"
     os.makedirs(output_directory, exist_ok=True)
 
     pdf_paths = []
-    # 获取用户输入的层级
+    # 获取用户输入的层级，不知道可以填10测试一下，参数对了下载碎图便可以自动构造
     tile_level = int(input("请输入图像的层级："))
 
     for index, url in enumerate(urls, start=1):
