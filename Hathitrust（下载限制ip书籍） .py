@@ -1,10 +1,10 @@
 import os
 import requests
 from urllib.parse import urlparse, parse_qs
-
+#babel.hathitrust.org下载 （有地区限制版）其它无限制可以使用专门下载器
 def download_file(url, proxy, folder):
     try:
-        # 使用代理下载文件
+        # 使用代理下载，使用的是clash verge
         response = requests.get(url, proxies=proxy, stream=True)
         response.raise_for_status()  # 检查请求是否成功
 
@@ -29,7 +29,7 @@ def download_file(url, proxy, folder):
 if __name__ == "__main__":
     # 设置代理
     proxy = {
-        "http": "http://127.0.0.1:7898",  # 根据你的代理设置修改
+        "http": "http://127.0.0.1:7898",  # 根据你的代理设置修改，查看自己的端口修改
         "https": "http://127.0.0.1:7898"
     }
 
