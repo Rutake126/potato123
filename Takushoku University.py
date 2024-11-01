@@ -2,9 +2,13 @@ import os
 import requests
 from PIL import Image
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
-# 设置路径为 E:\2025\download1  
-download_path = os.path.join('E:\\2025', 'download1') 
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+download_path = os.path.join('E:\\2025', f'download_{timestamp}')
+os.makedirs(download_path, exist_ok=True)
+
 
 # 下载和解析 XML
 dzi = "https://opac.lib.takushoku-u.ac.jp/kyugaichi/htmls/resources/2013_013_001/root.xml"
@@ -19,6 +23,14 @@ root = ET.fromstring(xml_content)
 
 # 获取 <image> 节点并提取信息 ，没有的可以换成resource
 image_node = root.find('.//image')
+if image_node is None:
+    image_node = root.find('.//resource')
+
+if image_node is not None:
+    print("找到节点：", image_node.tag)
+else:
+    print("未找到节点")
+
 if image_node is not None:
     wi = int(image_node.attrib['width'])
     hi = int(image_node.attrib['height'])
