@@ -8,7 +8,7 @@ import numpy as np
 import re
 
 
-class ImageDownloader:
+class ImageDownloader:  #用于下载故宫博物院后缀我xml的缩放图
     def __init__(self):
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
