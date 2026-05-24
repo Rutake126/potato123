@@ -9,7 +9,7 @@ from PIL import Image
 from selenium import webdriver
 
 
-def download_yunzhan_pdf(url, output_filename="云展网电子书.pdf"):
+def download_yunzhan_pdf(url, output_filename="xx.pdf"):
     print(f"开始处理链接: {url}")
 
     # 1. 配置 Selenium (移除了性能日志监听，大幅降低内存占用防止崩溃)
@@ -137,8 +137,6 @@ def download_yunzhan_pdf(url, output_filename="云展网电子书.pdf"):
             seen.add(link)
             unique_links.append(link)
 
-    # 终极安全网：如果图片 URL 结尾是数字（如 1.jpg, 2.jpg... 10.jpg），强制进行数字排序。
-    # 这能彻底解决 "10.jpg" 被排到 "2.jpg" 前面的经典 Python 字典序陷阱！
     def extract_final_num(u):
         match = re.search(r'/(\d+)(?:\.\w+)$', u)
         return int(match.group(1)) if match else 0
@@ -170,9 +168,9 @@ def download_yunzhan_pdf(url, output_filename="云展网电子书.pdf"):
 
     print(f"\n正在合成并保存为 PDF 文件: {output_filename} ...")
     images[0].save(output_filename, save_all=True, append_images=images[1:])
-    print("✨ 恭喜！完美顺序的 PDF 已生成完毕！")
+    print("已生成完毕！")
 
 
 if __name__ == "__main__":
-    TARGET_URL = "https://book.yunzhan365.com/xltqx/cvxe/mobile/index.html"
-    download_yunzhan_pdf(TARGET_URL, output_filename="云展网电子书_顺序修正版.pdf")
+    TARGET_URL = "https://book.xx365.com/xltqx/cvxe/mobile/index.html"
+    download_yunzhan_pdf(TARGET_URL, output_filename="顺序修正版.pdf")
